@@ -1,11 +1,13 @@
 //Recuperation de l'ID pour FETCH
-
 let str = window.location.href;
 let url = new URL(str);
 let id = url.searchParams.get("id");
 
-//Fetch des donnes du produit
+function Main() {
+  DisplayOneProduct();
+}
 
+//Fetch des donnes du produit
 function DisplayOneProduct() {
   fetch("http://localhost:3000/api/products/" + id)
     .then((response) => {
@@ -46,12 +48,9 @@ function DisplayOneProduct() {
 }
 
 //Remplit le cart avec les informations de la page
-
 document.getElementById("addToCart").addEventListener("click", AddToCart);
-
-//console.log(localStorage);
-
 async function AddToCart() {
+  //Creating an object for the local storage
   let orderDetails = {
     productId: id,
     quantity: 0,
@@ -78,20 +77,32 @@ async function AddToCart() {
       console.error(error);
     });
 
-  orderDetails.color = document.getElementById("colors").value;
+  let colorOption = document.getElementById("colors");
+  let kanapQuantity = document.getElementById("quantity");
 
-  if (localStorage.getItem(id + "-" + orderDetails.color)) {
-    orderDetails = JSON.parse(
-      localStorage.getItem(id + "-" + orderDetails.color)
+  //Controlling for orders with negative values or empty color values
+  if (!colorOption.value || kanapQuantity.value < "1") {
+    alert("Veuillez renseigner une valeur adéquate");
+  } else {
+    orderDetails.color = colorOption.value;
+
+    //S'il y a deja un objet avec la même couleur, il sera extrait du local storage, parsé et sa propriété quantité sera ajouté à la nouvelle quantité
+    if (localStorage.getItem(id + "-" + orderDetails.color)) {
+      orderDetails = JSON.parse(
+        localStorage.getItem(id + "-" + orderDetails.color)
+      );
+    }
+
+    orderDetails.quantity += parseInt(
+      document.getElementById("quantity").value
+    );
+
+    //Envoie l'objet order details en créant une clef avec le ID et la couleur
+    localStorage.setItem(
+      id + "-" + orderDetails.color,
+      JSON.stringify(orderDetails)
     );
   }
-
-  orderDetails.quantity += parseInt(document.getElementById("quantity").value);
-
-  localStorage.setItem(
-    id + "-" + orderDetails.color,
-    JSON.stringify(orderDetails)
-  );
 }
 
-DisplayOneProduct();
+Main();
