@@ -1,3 +1,5 @@
+// --------------------------------------------------------------------
+
 let myOrders = GetOrdersFromLocalStorage();
 let formData = {
   contact: {
@@ -12,13 +14,14 @@ let formData = {
 
 Main();
 
+//Fonction principale pour exécuter l'ensemble du code de la page
 function Main() {
   FetchAndDisplayProducts();
   CalculateTotal();
   CreateObjectOrder();
 }
 
-//Function to get the orders stored in the storage and convert them into JSON objects
+//Function pour extraire les orders du local storage et les convertir en un objet JSON utilisable
 function GetOrdersFromLocalStorage() {
   const items = { ...localStorage };
 
@@ -31,8 +34,7 @@ function GetOrdersFromLocalStorage() {
   return orders;
 }
 
-//Function to use the JSON objects and plug them into the HTML
-
+//Function pour utiliser les objets JSON et les intégrer dans le HTML
 function FetchAndDisplayProducts() {
   //Getting the parent SECTION and all the data
   // console.log(myOrders);
@@ -167,7 +169,7 @@ function FetchAndDisplayProducts() {
   }
 }
 
-//Function to Calculate the total quantity and total cost of the order
+//Fonction pour calculer la quantité totale ainsi que le prix de la commande
 function CalculateTotal() {
   let totalOrders = 0;
   let totalPrice = 0;
@@ -186,23 +188,7 @@ function CalculateTotal() {
   }
 }
 
-// function ValidateFormData() {
-//   let firstName = document.getElementById("firstName");
-
-//   firstName.addEventListener("input", function (e) {
-//     if (/([A-Z])\w+/.test(e.target.value)) {
-//       console.log("un vrai prenom");
-//     } else {
-//       console.log("NON");
-//     }
-//   });
-
-//   let lastName = document.getElementById("lastName");
-//   let address = document.getElementById("address");
-//   let city = document.getElementById("city");
-//   let email = document.getElementById("email");
-// }
-
+//Fonction pour créer l'objet qui sera posté dans l'API
 function CreateObjectOrder() {
   let cartOrder = document.getElementById("order");
 
@@ -224,6 +210,7 @@ function CreateObjectOrder() {
   });
 }
 
+//Fonction pour poster l'objet dans l'API
 async function PostObjectOrder() {
   console.log(formData);
 

@@ -1,3 +1,5 @@
+DisplayProducts();
+
 function DisplayProducts() {
   fetch("http://localhost:3000/api/products")
     .then((response) => {
@@ -7,8 +9,8 @@ function DisplayProducts() {
     })
     .then(function (data) {
       console.log(data);
-
-      for (let product of data) {
+      let products = data;
+      for (let product of products) {
         const mySection = document.getElementById("items");
 
         // Links to Product
@@ -49,5 +51,3 @@ function DisplayProducts() {
       console.error(error);
     });
 }
-
-DisplayProducts();
