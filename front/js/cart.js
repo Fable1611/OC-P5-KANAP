@@ -82,8 +82,8 @@ function DisplayProducts() {
 
     // //IMG with URl
     let newImg = document.createElement("img");
-    newImg.src = order.imgUrl;
-    newImg.alt = order.altTxt;
+    newImg.src = order.data.imageUrl;
+    newImg.alt = order.data.altTxt;
 
     cartImageContainer.appendChild(newImg);
 
@@ -103,7 +103,7 @@ function DisplayProducts() {
 
     //Creating Heading H2 Tag inside DIV(2)
     let cartTitle = document.createElement("h2");
-    cartTitle.innerText = order.name;
+    cartTitle.innerText = order.data.name;
 
     cartItemContainerDescription.appendChild(cartTitle);
 
@@ -115,7 +115,7 @@ function DisplayProducts() {
 
     //Creating p inside DIV(2)
     let cartPrice = document.createElement("p");
-    cartPrice.innerText = order.price + " €";
+    cartPrice.innerText = order.data.price + " €";
 
     cartItemContainerDescription.appendChild(cartPrice);
 
@@ -204,7 +204,7 @@ function CalculateTotal() {
 
     let totalPriceContainer = document.getElementById("totalPrice");
     let totalPriceCalculated = (totalPrice +=
-      parseInt(order.price) * order.quantity);
+      parseInt(order.data.price) * order.quantity);
     totalPriceContainer.innerHTML = totalPriceCalculated;
     // console.log(totalPrice);
   }
