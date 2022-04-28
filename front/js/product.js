@@ -49,33 +49,13 @@ function DisplayOneProduct() {
 
 //Remplit le cart avec les informations de la page
 document.getElementById("addToCart").addEventListener("click", AddToCart);
-async function AddToCart() {
+function AddToCart() {
   //Creating an object for the local storage
   let orderDetails = {
     productId: id,
     quantity: 0,
     color: "",
-    price: "",
-    imgUrl: "",
-    altTxt: "",
-    name: "",
   };
-
-  await fetch("http://localhost:3000/api/products/" + id)
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      }
-    })
-    .then(function (data) {
-      orderDetails.price = data.price;
-      orderDetails.imgUrl = data.imageUrl;
-      orderDetails.altTxt = data.altTxt;
-      orderDetails.name = data.name;
-    })
-    .catch(function (error) {
-      console.error(error);
-    });
 
   let colorOption = document.getElementById("colors");
   let kanapQuantity = document.getElementById("quantity");
