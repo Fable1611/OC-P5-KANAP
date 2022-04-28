@@ -15,10 +15,35 @@ let formData = {
 Main();
 
 //Fonction principale pour exécuter l'ensemble du code de la page
-function Main() {
-  FetchAndDisplayProducts();
+async function Main() {
+  await GetOrdersFromAPI();
+  DisplayProducts();
   CalculateTotal();
   CreateObjectOrder();
+}
+
+//Fonction pour incrementer l'objet MyOrders avec des informations additionnelles
+async function GetOrdersFromAPI() {
+  for (let order of myOrders) {
+    let orderDetail = await GetOneOrder(order.productId);
+    order.data = orderDetail;
+  }
+}
+
+//Fonction fonction pour fetch les données d'un seul produit
+function GetOneOrder(productId) {
+  return fetch("http://localhost:3000/api/products/" + productId)
+    .then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+    })
+    .then(function (data) {
+      return data;
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
 }
 
 //Function pour extraire les orders du local storage et les convertir en un objet JSON utilisable
@@ -35,10 +60,7 @@ function GetOrdersFromLocalStorage() {
 }
 
 //Function pour utiliser les objets JSON et les intégrer dans le HTML
-function FetchAndDisplayProducts() {
-  //Getting the parent SECTION and all the data
-  // console.log(myOrders);
-
+function DisplayProducts() {
   for (let order of myOrders) {
     const myCart = document.getElementById("cart__items");
 
@@ -129,19 +151,6 @@ function FetchAndDisplayProducts() {
 
     cartItemContentSettingsQuantity.appendChild(productQuantityInput);
 
-    //Adding eventlistener to update quantity directly in LocalStorage
-    productQuantityInput.addEventListener("input", function (e) {
-      order.quantity = e.target.value;
-      localStorage.setItem(
-        order.productId + "-" + order.color,
-        JSON.stringify(order)
-      );
-      // console.log(order.quantity);
-    });
-
-    //Adding eventlistener to call the function calculating the total
-    productQuantityInput.addEventListener("input", CalculateTotal);
-
     //Creating a new DIV(5) inside DIV(3)
     let cartItemContentSettingsDelete = document.createElement("div");
     cartItemContentSettingsDelete.innerHTML = "";
@@ -156,6 +165,15 @@ function FetchAndDisplayProducts() {
     deleteItem.className = "deleteItem";
     cartItemContentSettingsDelete.appendChild(deleteItem);
 
+    //Adding eventlistener to update quantity directly in LocalStorage
+    productQuantityInput.addEventListener("input", function (e) {
+      order.quantity = e.target.value;
+      localStorage.setItem(
+        order.productId + "-" + order.color,
+        JSON.stringify(order)
+      );
+    });
+
     //Adding eventlistener to delete item directly in LocalStorage
     deleteItem.addEventListener("click", function (e) {
       order.quantity = 0;
@@ -164,6 +182,10 @@ function FetchAndDisplayProducts() {
       );
       deleteItem.closest("article").style.display = "none";
     });
+
+    //Adding eventlistener to call the function calculating the total
+    productQuantityInput.addEventListener("input", CalculateTotal);
+
     //Adding eventlistener to call the function calculating the total
     deleteItem.addEventListener("click", CalculateTotal);
   }
@@ -203,7 +225,9 @@ function CreateObjectOrder() {
     console.log(formData);
 
     for (order of myOrders) {
-      formData.products.push(order.productId);
+      if (order.quantity != 0) {
+        formData.products.push(order.productId);
+      }
     }
 
     PostObjectOrder();
