@@ -1,4 +1,4 @@
-// --------------------------------------------------------------------
+// --------------------------------CODE EXCUTÉ------------------------------------//
 
 let myOrders = GetOrdersFromLocalStorage();
 let formData = {
@@ -13,6 +13,8 @@ let formData = {
 };
 
 Main();
+
+// --------------------------------FONCTIONS------------------------------------//
 
 //Fonction principale pour exécuter l'ensemble du code de la page
 async function Main() {
@@ -262,4 +264,35 @@ async function PostObjectOrder() {
     .catch(function (error) {
       console.error(error);
     });
+}
+
+//Fonction pour valider l'input des Forms
+
+function DisplayErrorsInForm() {
+  const firstNameInput = document.getElementById("firstName");
+  const lastNameInput = document.getElementById("lastName");
+  const addressInput = document.getElementById("address");
+  const cityInput = document.getElementById("city");
+  const emailInput = document.getElementById("email");
+
+  let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+  let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
+  let addressErrorMsg = document.getElementById("addressErrorMsg");
+  let cityErrorMsg = document.getElementById("cityErrorMsg");
+  let emailErrorMsg = document.getElementById("emailErrorMsg");
+
+  const formulaire = document.getElementById("cartForm");
+
+  formulaire.addEventListener("submit", (e) => {
+    let errorMessages = [];
+
+    if (firstNameInput.value.length >= 5) {
+      errorMessages.push("Ton nom est trop long");
+    }
+
+    if (MessageChannel.length > 0) {
+      e.preventDefault();
+      firstNameErrorMsg.innerText = errorMessages.join(",");
+    }
+  });
 }
