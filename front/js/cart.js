@@ -21,7 +21,7 @@ async function Main() {
   await GetOrdersFromAPI();
   DisplayProducts();
   CalculateTotal();
-  CreateObjectOrder();
+  DisplayErrorsInForm();
 }
 
 //Fonction pour incrementer l'objet MyOrders avec des informations additionnelles
@@ -212,28 +212,77 @@ function CalculateTotal() {
   }
 }
 
-//Fonction pour créer l'objet qui sera posté dans l'API
-function CreateObjectOrder() {
-  let cartOrder = document.getElementById("order");
+//Fonction pour valider l'input des Forms
+function DisplayErrorsInForm() {
+  const firstNameInput = document.getElementById("firstName");
+  const lastNameInput = document.getElementById("lastName");
+  const addressInput = document.getElementById("address");
+  const cityInput = document.getElementById("city");
+  const emailInput = document.getElementById("email");
 
-  cartOrder.addEventListener("click", function (e) {
-    e.preventDefault();
+  let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+  let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
+  let addressErrorMsg = document.getElementById("addressErrorMsg");
+  let cityErrorMsg = document.getElementById("cityErrorMsg");
+  let emailErrorMsg = document.getElementById("emailErrorMsg");
 
-    formData.contact.firstName = firstName.value;
-    formData.contact.lastName = lastName.value;
-    formData.contact.address = address.value;
-    formData.contact.city = city.value;
-    formData.contact.email = email.value;
-    console.log(formData);
+  const formulaire = document.getElementById("cartForm");
 
-    for (order of myOrders) {
-      if (order.quantity != 0) {
-        formData.products.push(order.productId);
-      }
+  formulaire.addEventListener("submit", (e) => {
+    let errorMessages = {
+      firstName: "",
+      lastName: "",
+      city: "",
+      email: "",
+    };
+
+    if (!firstNameInput.value.match(/^[A-Za-z]+$/)) {
+      errorMessages.firstName = "Veuillez n'utiliser que des lettres :)";
+    }
+    if (!lastNameInput.value.match(/^[A-Za-z]+$/)) {
+      errorMessages.lastName = "Veuillez n'utiliser que des lettres :)";
+    }
+    if (!cityInput.value.match(/^[A-Za-z]+$/)) {
+      errorMessages.city = "Veuillez n'utiliser que des lettres :)";
+    }
+    if (!emailInput.value.match(/\S+@\S+\.\S+/)) {
+      errorMessages.email = "Veuillez renseigner une addresse email correcte";
     }
 
-    PostObjectOrder();
+    if (
+      errorMessages.firstName != "" ||
+      errorMessages.lastName != "" ||
+      errorMessages.city != "" ||
+      errorMessages.email != ""
+    ) {
+      e.preventDefault();
+      firstNameErrorMsg.innerText = errorMessages.firstName;
+      lastNameErrorMsg.innerText = errorMessages.lastName;
+      cityErrorMsg.innerText = errorMessages.city;
+      emailErrorMsg.innerText = errorMessages.email;
+    } else {
+      e.preventDefault();
+      CreateObjectOrder();
+    }
   });
+}
+
+//Fonction pour créer l'objet qui sera posté dans l'API
+function CreateObjectOrder() {
+  formData.contact.firstName = firstName.value;
+  formData.contact.lastName = lastName.value;
+  formData.contact.address = address.value;
+  formData.contact.city = city.value;
+  formData.contact.email = email.value;
+  console.log(formData);
+
+  for (order of myOrders) {
+    if (order.quantity != 0) {
+      formData.products.push(order.productId);
+    }
+  }
+
+  PostObjectOrder();
 }
 
 //Fonction pour poster l'objet dans l'API
@@ -264,35 +313,4 @@ async function PostObjectOrder() {
     .catch(function (error) {
       console.error(error);
     });
-}
-
-//Fonction pour valider l'input des Forms
-
-function DisplayErrorsInForm() {
-  const firstNameInput = document.getElementById("firstName");
-  const lastNameInput = document.getElementById("lastName");
-  const addressInput = document.getElementById("address");
-  const cityInput = document.getElementById("city");
-  const emailInput = document.getElementById("email");
-
-  let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
-  let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
-  let addressErrorMsg = document.getElementById("addressErrorMsg");
-  let cityErrorMsg = document.getElementById("cityErrorMsg");
-  let emailErrorMsg = document.getElementById("emailErrorMsg");
-
-  const formulaire = document.getElementById("cartForm");
-
-  formulaire.addEventListener("submit", (e) => {
-    let errorMessages = [];
-
-    if (firstNameInput.value.length >= 5) {
-      errorMessages.push("Ton nom est trop long");
-    }
-
-    if (MessageChannel.length > 0) {
-      e.preventDefault();
-      firstNameErrorMsg.innerText = errorMessages.join(",");
-    }
-  });
 }
